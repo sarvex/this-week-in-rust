@@ -46,7 +46,7 @@ def default_draft_path():
 
 def issue_filename(date):
     """ Compute the issue filename, given the date. """
-    return date.isoformat() + '-this-week-in-rust.md'
+    return f'{date.isoformat()}-this-week-in-rust.md'
 
 
 def default_date():
@@ -86,7 +86,6 @@ def read_previous_issue(date):
             # Note: this error doesn't necessarily indicate something
             # is wrong, because we're searching multiple paths.
             LOG.debug(f'failed to read {full_path}: {e}')
-            pass
     raise Exception(f'failed to read previous issue {filename}')
 
 
@@ -108,15 +107,14 @@ def read_previous_events(date):
             else:
                 # Copy this line
                 events_list += line + '\n'
-        else:
-            if line.strip().startswith(EVENTS_START):
-                # Start copying lines after this one.
-                found_events = True
+        elif line.strip().startswith(EVENTS_START):
+            # Start copying lines after this one.
+            found_events = True
 
     # If we made it here, something went wrong with the extraction.
     # Most likely, the previous issue doesn't have the strings we are
     # searching for (EVENTS_START, EVENTS_END).
-    raise Exception(f'failed to extract the previous events list')
+    raise Exception('failed to extract the previous events list')
 
 
 def create_draft(date):
@@ -159,17 +157,11 @@ def main():
     LOG.debug(f'command-line arguments: {args}')
 
     # Compute the issue date.
-    if args.date:
-        date = datetime.date.fromisoformat(args.date)
-    else:
-        date = default_date()
+    date = datetime.date.fromisoformat(args.date) if args.date else default_date()
     LOG.debug(f'issue date {date}')
 
     # Create the draft filename: draft/YYYY-MM-DD-this-week-in-rust.md
-    if args.draft_path:
-        draft_path = args.draft_path
-    else:
-        draft_path = default_draft_path()
+    draft_path = args.draft_path if args.draft_path else default_draft_path()
     filename = os.path.join(draft_path, issue_filename(date))
 
     # Create the draft text, and either write it to a file, or to stdout.

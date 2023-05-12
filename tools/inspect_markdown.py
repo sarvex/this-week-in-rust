@@ -40,8 +40,7 @@ def render_file(filename):
         if c % 2 != 0:
             warnings.warn(f'{filename}: found odd backticks: "{line}"')
 
-    html = markdown.markdown(md_text)
-    return html
+    return markdown.markdown(md_text)
 
 
 def check_tags(html, file):
@@ -52,9 +51,8 @@ def check_tags(html, file):
             tag_str = str(tag)[:50]
             warnings.warn(
                 f'{file}: unrecognized tag {tag.name} in "{tag_str}"')
-        if tag.name == 'li':
-            if tag.get_text() == '':
-                warnings.warn(f'{file}: empty <{tag.name}> tag after {prev_tag}')
+        if tag.name == 'li' and tag.get_text() == '':
+            warnings.warn(f'{file}: empty <{tag.name}> tag after {prev_tag}')
         prev_tag = tag
 
 def main():
@@ -78,8 +76,7 @@ if __name__ == "__main__":
     setup_logging()
     main()
 
-    warns = warnings.get()
-    if warns:
+    if warns := warnings.get():
         print("warnings exist:")
         for w in warns:
             print(w)

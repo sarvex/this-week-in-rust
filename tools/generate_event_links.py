@@ -32,11 +32,11 @@ def get_closest_wednesday():
     """
     Returns the closest Wednesday to the current day
     """
-    day = datetime.datetime.today()
+    day = datetime.datetime.now()
 
     while day.weekday() != WEDNESDAY_DATETIME_DAY:
         day += datetime.timedelta(days=1)
-    
+
     return day
 
 def get_desired_date_range():
@@ -90,10 +90,10 @@ def main():
     # TODO: Auto parse results... For now, generates an HTML page of links to use
     CUTOFF_POINT = 160 # Skips all portions of URL up to the location + in-person/online
 
-    date_title = str(datetime.datetime.today().strftime("%m_%d_%Y"))
+    date_title = datetime.datetime.now().strftime("%m_%d_%Y")
     with open(f'{date_title}.html', 'w') as f:
         f.write(f'<p>{date_title}</p>\n<br>\n')
-        for i, url in enumerate(urls):
+        for url in urls:
             text_line = url[CUTOFF_POINT:]
             f.write(f'<a href="{url}" target="_blank">{text_line}</a>\n<br>\n<br>\n')
 

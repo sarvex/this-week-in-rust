@@ -5,7 +5,7 @@ import os
 
 # Adjust `TESTING_LOCALLY` if testing search functionality locally.
 TESTING_LOCALLY = False
-USE_EMAIL_THEME = True if os.environ.get('USE_EMAIL_THEME') == '1' else False
+USE_EMAIL_THEME = os.environ.get('USE_EMAIL_THEME') == '1'
 
 AUTHOR = u'TWiR Contributors'
 SITENAME = u"This Week in Rust"
@@ -13,12 +13,8 @@ SITEURL = 'https://this-week-in-rust.org' if not TESTING_LOCALLY else 'http://lo
 
 SOURCE_URL = 'https://github.com/rust-lang/this-week-in-rust'
 
-if USE_EMAIL_THEME:
-    THEME = 'themes/newsletter'
-else:
-    THEME = 'themes/rusted'
-
-THEME_STATIC_DIR = THEME + '/static'
+THEME = 'themes/newsletter' if USE_EMAIL_THEME else 'themes/rusted'
+THEME_STATIC_DIR = f'{THEME}/static'
 
 TIMEZONE = 'America/New_York'
 

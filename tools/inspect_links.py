@@ -44,12 +44,12 @@ warnings = Warnings()
 RE_FILENAME = re.compile(r'\d\d\d\d-\d\d-\d\d-this-week-in-rust.md$')
 
 # A block-list of tracking parameters
-TRACKING_PARAMETERS = set([
+TRACKING_PARAMETERS = {
     'utm_source',
     'utm_campaign',
     'utm_medium',
     'utm_content',
-])
+}
 
 # A list of section titles that will trigger duplicate-tag detection.
 STRICT_TITLES = [
@@ -121,10 +121,7 @@ def extract_links(html):
             # we will check for any duplicate links inside it.
 
             strict_mode = is_strict_title(tag.string)
-            if strict_mode:
-                header_level = level
-            else:
-                header_level = None
+            header_level = level if strict_mode else None
             LOG.debug(f'found heading tag: {tag} (strict={strict_mode})')
 
     return urls
@@ -178,9 +175,9 @@ def parse_url(link):
     if query:
         LOG.debug(f'{parsed_url.geturl()} found query parameters: {query}')
         query = scrub_parameters(link, query)
-        if query:
-            LOG.debug(
-                f'{parsed_url.geturl()} keeping query parameters: {query}')
+    if query:
+        LOG.debug(
+            f'{parsed_url.geturl()} keeping query parameters: {query}')
 
     # Remove consecutive slashes, because https://path/to////file and http://path/to/file are the same.
     path = parsed_url.path
@@ -260,8 +257,7 @@ def inspect_files(file_list, num_warn):
         links = inspect_file(file)
         LOG.debug(f'found links: {links}')
         for link in links:
-            collision = linkset.get(link)
-            if collision:
+            if collision := linkset.get(link):
                 warnings.warn(
                     f"possible duplicate link {link} in file {file} (also found in {collision}")
             else:
@@ -294,8 +290,7 @@ if __name__ == "__main__":
     setup_logging()
     main()
 
-    warns = warnings.get()
-    if warns:
+    if warns := warnings.get():
         print("warnings exist:")
         for w in warns:
             print(w)

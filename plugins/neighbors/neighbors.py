@@ -29,10 +29,14 @@ def iter_neighbors(seq):
 def get_translation(article, preferred_language):
     if not article:
         return None
-    for translation in article.translations:
-        if translation.lang == preferred_language:
-            return translation
-    return article
+    return next(
+        (
+            translation
+            for translation in article.translations
+            if translation.lang == preferred_language
+        ),
+        article,
+    )
 
 
 def set_neighbors(articles, next_name, prev_name):
